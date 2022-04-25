@@ -12,6 +12,8 @@ Apps used:
 
 ## Install
 
+Create an `.env` file with valid environment variables. Then:
+
 ```
 # Install helmfile
 $ brew install helmfile
