@@ -1,0 +1,22 @@
+repositories:
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+
+releases:
+- name: ingress
+  namespace: ingress-nginx
+  createNamespace: true
+  chart: ingress-nginx/ingress-nginx
+  version: 4.0.19
+  installed: true
+  values:
+    - controller:
+        # https://kubernetes.github.io/ingress-nginx/deploy/#digital-ocean
+        service:
+          type: LoadBalancer
+          externalTrafficPolicy: Local
+          annotations:
+            service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+            # https://www.digitalocean.com/community/questions/how-do-i-correct-a-connection-timed-out-error-during-http-01-challenge-propagation-with-cert-manager
+            service.beta.kubernetes.io/do-loadbalancer-hostname: {{ requiredEnv "LB_HOTFIX_HOST" }}
+    - values.yaml

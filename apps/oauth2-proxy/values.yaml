@@ -1,0 +1,5 @@
+extraArgs:
+  provider: "github"
+  github-user: "dvdblk"
+  whitelist-domain: .dvdblk.com
+  cookie-domain: .dvdblk.com

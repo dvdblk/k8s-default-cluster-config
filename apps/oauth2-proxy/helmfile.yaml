@@ -1,0 +1,29 @@
+repositories:
+- name: oauth2-proxy
+  url: https://oauth2-proxy.github.io/manifests
+
+releases:
+- name: oauth2-proxy
+  namespace: oauth2-proxy
+  createNamespace: true
+  chart: oauth2-proxy/oauth2-proxy
+  version: 6.2.0
+  installed: true
+  values:
+    - config:
+        clientID: {{ requiredEnv "OAUTH2_CLIENT_ID" }}
+        clientSecret: {{ requiredEnv "OAUTH2_CLIENT_SECRET" }}
+        cookieSecret: {{ requiredEnv "OAUTH2_COOKIE_SECRET" }}
+    - ingress:
+        enabled: true
+        path: /
+        hosts:
+          - {{ requiredEnv "OAUTH2_HOST" }}
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+          kubernetes.io/ingress.class: nginx
+        tls:
+          - secretName: prod-cert
+            hosts:
+              - {{ requiredEnv "OAUTH2_HOST" }}
+    - values.yaml

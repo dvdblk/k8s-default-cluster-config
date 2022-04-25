@@ -1,0 +1,50 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  name: default
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  name: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: default
+subjects:
+- kind: ServiceAccount
+  name: default
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: patch-sa
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: patch-sa
+        image: google/cloud-sdk
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c", "kubectl patch serviceaccount default -n argo-cd -p '{\"imagePullSecrets\": [{\"name\": \"ghcr-regcred\"}]}'"]
+

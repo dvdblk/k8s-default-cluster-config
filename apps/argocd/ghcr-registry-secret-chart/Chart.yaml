@@ -1,0 +1,4 @@
+name: ghcr-registry-secret
+version: v1.0.0
+apiVersion: v2
+description: GitHub private repository secret (includes the PAT) + default service account patch for imagePullSecrets
